@@ -4,8 +4,15 @@ from openpilot.system.ui.lib.application import gui_app, FontWeight, FONT_SCALE
 from openpilot.system.ui.lib.multilang import tr
 from openpilot.system.ui.widgets import Widget
 from openpilot.selfdrive.ui.ui_state import ui_state
-from openpilot.starpilot.common.experimental_state import requested_experimental_mode
-from openpilot.system.hardware import swaglog
+from openpilot.starpilot.common.experimental_state import (
+  requested_experimental_mode,
+  next_manual_ce_status,
+  next_manual_cc_status,
+  sync_manual_ce_state,
+  sync_manual_cc_state,
+  CEStatus,
+  CCStatus,
+)
 
 
 class ExperimentalModeButton(Widget):
@@ -26,12 +33,24 @@ class ExperimentalModeButton(Widget):
     self.experimental_mode = requested_experimental_mode(self.params, ui_state.params_memory)
 
   def _handle_mouse_release(self, _):
-    swaglog.info(f"ExperimentalModeButton clicked: toggling from {self.experimental_mode}")
-    # Toggle experimental mode directly instead of using callback
-    new_mode = not self.experimental_mode
-    self.params.put_bool("ExperimentalMode", new_mode)
-    self.experimental_mode = new_mode
-    swaglog.info(f"ExperimentalModeButton toggled to {new_mode}")
+    # Handle conditional modes or direct toggle based on which mode is enabled
+    if self.params.get_bool("ConditionalExperimental"):
+      current_status = ui_state.params_memory.get_int("CEStatus", default=CEStatus["OFF"])
+      override_value = next_manual_ce_status(current_status, self.experimental_mode)
+      ui_state.params_memory.put_int("CEStatus", override_value)
+      sync_manual_ce_state(self.params, override_value)
+      self.experimental_mode = override_value == CEStatus["USER_OVERRIDDEN"]
+    elif self.params.get_bool("ConditionalChill"):
+      current_status = ui_state.params_memory.get_int("CCStatus", default=CCStatus["OFF"])
+      override_value = next_manual_cc_status(current_status, self.experimental_mode)
+      ui_state.params_memory.put_int("CCStatus", override_value)
+      sync_manual_cc_state(self.params, override_value)
+      self.experimental_mode = override_value == CCStatus["USER_EXPERIMENTAL"]
+    else:
+      # Direct toggle for regular experimental mode
+      new_mode = not self.experimental_mode
+      self.params.put_bool("ExperimentalMode", new_mode)
+      self.experimental_mode = new_mode
 
   def _get_gradient_colors(self):
     alpha = 0xCC if self.is_pressed else 0xFF
