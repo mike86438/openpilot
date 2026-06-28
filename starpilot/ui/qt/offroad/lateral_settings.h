@@ -27,7 +27,21 @@ private:
   QSet<QString> advancedLateralTuneKeys = {"ForceAutoTune", "ForceAutoTuneOff", "ForceTorqueController", "SteerDelay", "SteerFriction", "SteerLatAccel", "SteerKP", "SteerRatio"};
   QSet<QString> aolKeys = {"PauseAOLOnBrake"};
   QSet<QString> laneChangeKeys = {"LaneChangeSmoothing", "LaneChangeTime", "LaneDetectionWidth", "MinimumLaneChangeSpeed", "NudgelessLaneChange", "OneLaneChange"};
-  QSet<QString> lateralTuneKeys = {"NNFF", "NNFFLite", "TurnDesires", "NavDesiresAllowed"};
+  QSet<QString> lateralTuneKeys = {
+    "HondaCenterBoostMinSpeed", "HondaCenterBoostThreshold", "HondaCenterScale",
+    "HondaDriverAssistDuringOverride",
+    "HondaLpfTauHighway", "HondaLpfTauLowSpeed", "HondaLpfTauStandard",
+    "HondaNotchEnabled", "HondaNotchFreq", "HondaNotchQ",
+    "HondaOverrideFadeDownSecs", "HondaOverrideFadeUpSecs", "HondaOverrideTorqueScale",
+    "HondaSteerDeltaDown", "HondaSteerDeltaLimiter", "HondaSteerDeltaUp",
+    "HondaTorqueLowPassFilter",
+    "HondaUnwindBoostSeconds", "HondaUnwindFfMultiplier", "HondaUnwindFreeze", "HondaUnwindLookahead",
+    "LatFScaleHighway", "LatFScaleLowSpeed", "LatFScaleStandard",
+    "LatIScaleHighway", "LatIScaleLowSpeed", "LatIScaleStandard",
+    "LatPScaleHighway", "LatPScaleLowSpeed", "LatPScaleStandard",
+    "NrdrDriverOverrideThreshold", "NrdrIncreaseOverrideTolerance", "NrdrMinSteerSpeed", "NrdrOverrideThresholdCenterBoost",
+    "NNFF", "NNFFLite", "TurnDesires", "NavDesiresAllowed",
+  };
   QSet<QString> qolKeys = {"PauseLateralSpeed", "LateralResumeDelay"};
 
   QSet<QString> parentKeys;

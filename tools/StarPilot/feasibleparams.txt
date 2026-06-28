@@ -1,9 +1,9 @@
 Dynamically Derived Feasible Param Candidates (The Golden List)
 ===============================================================
 
-Total globally registered C++ keys:  507
-Total explicit UI string references: 415
-Total Editable/Toggleable targets:   378
+Total globally registered C++ keys:  559
+Total explicit UI string references: 460
+Total Editable/Toggleable targets:   423
 
 AccelerationPath
 AccelerationProfile
@@ -28,6 +28,7 @@ AlwaysOnDM
 AlwaysOnLateral
 AutomaticUpdates
 AutomaticallyDownloadModels
+AvailableModelArtifactFormats
 AvailableModelNames
 AvailableModelSeries
 AvailableModels
@@ -37,6 +38,7 @@ BlindSpotMetrics
 BlindSpotPath
 BootLogo
 BorderMetrics
+CCMLaunchAssist
 CCMLead
 CCMSetSpeedMargin
 CCMSpeed
@@ -57,11 +59,11 @@ CalibrationParams
 CalibrationProgress
 CameraView
 CancelButtonControl
+ClearNavOnOffroad
 ColorScheme
 CommunityFavorites
 ConditionalChill
 ConditionalExperimental
-PrioritizeSmoothFollowing
 CurveSpeedController
 CustomAlerts
 CustomCruise
@@ -131,12 +133,35 @@ HideLeadMarker
 HideMaxSpeed
 HideSpeed
 HideSpeedLimit
+HideSteeringWheel
 HideTurningBanner
 HigherBitrate
 HolidayThemes
+HondaCenterBoostMinSpeed
+HondaCenterBoostThreshold
+HondaCenterScale
+HondaDriverAssistDuringOverride
+HondaLpfTauHighway
+HondaLpfTauLowSpeed
+HondaLpfTauStandard
+HondaNotchEnabled
+HondaNotchFreq
+HondaNotchQ
+HondaOverrideFadeDownSecs
+HondaOverrideFadeUpSecs
+HondaOverrideTorqueScale
+HondaSteerDeltaDown
+HondaSteerDeltaLimiter
+HondaSteerDeltaUp
+HondaTorqueLowPassFilter
+HondaUnwindBoostSeconds
+HondaUnwindFfMultiplier
+HondaUnwindFreeze
+HondaUnwindLookahead
 HumanAcceleration
 HumanLaneChanges
 IconPack
+IgnoreIgnitionLine
 IncreaseFollowingLowVisibility
 IncreaseFollowingRain
 IncreaseFollowingRainStorm
@@ -159,6 +184,15 @@ LaneChanges
 LaneDetectionWidth
 LaneLinesWidth
 LanguageSetting
+LatFScaleHighway
+LatFScaleLowSpeed
+LatFScaleStandard
+LatIScaleHighway
+LatIScaleLowSpeed
+LatIScaleStandard
+LatPScaleHighway
+LatPScaleLowSpeed
+LatPScaleStandard
 LateralResumeDelay
 LateralTune
 LeadDepartingAlert
@@ -180,6 +214,7 @@ LongitudinalActuatorDelayStock
 LongitudinalPersonality
 LongitudinalTune
 LoudBlindspotAlert
+LoudBlindspotAlertWhenDisengaged
 LowVoltageShutdown
 MainCruiseButtonControl
 MapAcceleration
@@ -192,6 +227,7 @@ MaxDesiredAcceleration
 MinimumLaneChangeSpeed
 ModeButtonControl
 Model
+ModelManifestVersion
 ModelRandomizer
 ModelSortMode
 ModelUI
@@ -204,8 +240,11 @@ NavigationUI
 NoLogging
 NoUploads
 NostalgiaMode
+NrdrDriverOverrideThreshold
+NrdrIncreaseOverrideTolerance
+NrdrMinSteerSpeed
+NrdrOverrideThresholdCenterBoost
 NudgelessLaneChange
-NudgelessLaneChangeOnlyWhenEngaged
 NumericalTemp
 Offroad_ExcessiveActuation
 Offset1
@@ -227,6 +266,7 @@ PedalsOnUI
 PersistChillState
 PersistExperimentalState
 PreferredSchedule
+PrioritizeSmoothFollowing
 PromptDistractedVolume
 PromptVolume
 QOLLateral
@@ -325,6 +365,7 @@ StandardJerkSpeedDecrease
 StandardPersonalityProfile
 StandbyMode
 StarButtonControl
+StarPilotFavoriteSlots
 StartAccel
 StartAccelStock
 StartupMessageBottom
@@ -362,6 +403,7 @@ TrafficJerkDeceleration
 TrafficJerkSpeed
 TrafficJerkSpeedDecrease
 TrafficPersonalityProfile
+TrailerLoad
 TruckTuning
 TuningLevel
 TuningLevelConfirmed
