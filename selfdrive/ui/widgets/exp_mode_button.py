@@ -24,6 +24,12 @@ class ExperimentalModeButton(Widget):
   def show_event(self):
     self.experimental_mode = requested_experimental_mode(self.params, ui_state.params_memory)
 
+  def _handle_mouse_release(self, _):
+    super()._handle_mouse_release(_)
+    new_mode = not self.experimental_mode
+    self.params.put_bool("ExperimentalMode", new_mode)
+    self.experimental_mode = new_mode
+
   def _get_gradient_colors(self):
     alpha = 0xCC if self.is_pressed else 0xFF
 
