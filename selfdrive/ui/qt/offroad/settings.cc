@@ -189,7 +189,9 @@ void TogglesPanel::updateState(const UIState &s) {
 }
 
 void TogglesPanel::expandToggleDescription(const QString &param) {
-  toggles[param.toStdString()]->showDescription();
+  if (auto it = toggles.find(param.toStdString()); it != toggles.end() && it->second != nullptr) {
+    it->second->showDescription();
+  }
 }
 
 void TogglesPanel::scrollToToggle(const QString &param) {

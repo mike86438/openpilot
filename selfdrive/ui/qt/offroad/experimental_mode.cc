@@ -14,10 +14,11 @@ ExperimentalModeButton::ExperimentalModeButton(QWidget *parent) : QPushButton(pa
 
   // go to toggles and expand whichever mode control is actually active
   connect(this, &QPushButton::clicked, [=]() {
-    const QString toggle = params.getBool("ConditionalExperimental") ? "ConditionalExperimental" :
-                           params.getBool("ConditionalChill") ? "ConditionalChill" :
-                           "ExperimentalMode";
-    emit openSettings(2, toggle);
+    if (params.getBool("ConditionalExperimental") || params.getBool("ConditionalChill")) {
+      emit openSettings(0, "StarPilotPanel");
+    } else {
+      emit openSettings(2, "ExperimentalMode");
+    }
   });
 
   setFixedHeight(125);
