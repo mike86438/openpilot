@@ -1,3 +1,4 @@
+import threading
 import pyray as rl
 from openpilot.common.params import Params
 from openpilot.system.ui.lib.application import gui_app, FontWeight, FONT_SCALE
@@ -36,24 +37,40 @@ class ExperimentalModeButton(Widget):
     self.experimental_mode = requested_experimental_mode(self.params, ui_state.params_memory)
 
   def _on_toggle(self):
-    # Handle conditional modes or direct toggle based on which mode is enabled
+    # Update local state immediately for UI responsiveness
+    old_mode = self.experimental_mode
+
+    # Determine new state based on current mode
     if self.params.get_bool("ConditionalExperimental"):
       current_status = ui_state.params_memory.get_int("CEStatus", default=CEStatus["OFF"])
-      override_value = next_manual_ce_status(current_status, self.experimental_mode)
-      ui_state.params_memory.put_int("CEStatus", override_value)
-      sync_manual_ce_state(self.params, override_value)
-      self.experimental_mode = override_value == CEStatus["USER_OVERRIDDEN"]
+      override_value = next_manual_ce_status(current_status, old_mode)
+      new_mode = override_value == CEStatus["USER_OVERRIDDEN"]
     elif self.params.get_bool("ConditionalChill"):
       current_status = ui_state.params_memory.get_int("CCStatus", default=CCStatus["OFF"])
-      override_value = next_manual_cc_status(current_status, self.experimental_mode)
-      ui_state.params_memory.put_int("CCStatus", override_value)
-      sync_manual_cc_state(self.params, override_value)
-      self.experimental_mode = override_value == CCStatus["USER_EXPERIMENTAL"]
+      override_value = next_manual_cc_status(current_status, old_mode)
+      new_mode = override_value == CCStatus["USER_EXPERIMENTAL"]
     else:
-      # Direct toggle for regular experimental mode
-      new_mode = not self.experimental_mode
-      self.params.put_bool("ExperimentalMode", new_mode)
-      self.experimental_mode = new_mode
+      new_mode = not old_mode
+
+    # Update UI immediately
+    self.experimental_mode = new_mode
+
+    # Run expensive param operations in background thread to avoid UI stalls
+    def sync_params():
+      if self.params.get_bool("ConditionalExperimental"):
+        current_status = ui_state.params_memory.get_int("CEStatus", default=CEStatus["OFF"])
+        override_value = next_manual_ce_status(current_status, old_mode)
+        ui_state.params_memory.put_int("CEStatus", override_value)
+        sync_manual_ce_state(self.params, override_value)
+      elif self.params.get_bool("ConditionalChill"):
+        current_status = ui_state.params_memory.get_int("CCStatus", default=CCStatus["OFF"])
+        override_value = next_manual_cc_status(current_status, old_mode)
+        ui_state.params_memory.put_int("CCStatus", override_value)
+        sync_manual_cc_state(self.params, override_value)
+      else:
+        self.params.put_bool("ExperimentalMode", new_mode)
+
+    threading.Thread(target=sync_params, daemon=True).start()
 
   def _get_gradient_colors(self):
     alpha = 0xCC if self.is_pressed else 0xFF
