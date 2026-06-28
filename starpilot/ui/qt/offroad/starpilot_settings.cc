@@ -1,7 +1,6 @@
 #include "starpilot/ui/qt/offroad/data_settings.h"
 #include "starpilot/ui/qt/offroad/device_settings.h"
 #include "starpilot/ui/qt/offroad/starpilot_settings.h"
-#include "starpilot/ui/qt/offroad/lateral_settings.h"
 #include "starpilot/ui/qt/offroad/longitudinal_settings.h"
 #include "starpilot/ui/qt/offroad/maps_settings.h"
 #include "starpilot/ui/qt/offroad/model_settings.h"
@@ -68,7 +67,6 @@ bool nnffLogFileExists(const QString &carFingerprint) {
 void StarPilotSettingsWindow::createPanelButtons(StarPilotListWidget *list) {
   StarPilotDataPanel *starpilotDataPanel = new StarPilotDataPanel(this, !shownDescriptions.value("StarPilotDataPanel").toBool(false));
   StarPilotDevicePanel *starpilotDevicePanel = new StarPilotDevicePanel(this, !shownDescriptions.value("StarPilotDevicePanel").toBool(false));
-  StarPilotLateralPanel *starpilotLateralPanel = new StarPilotLateralPanel(this, !shownDescriptions.value("StarPilotLateralPanel").toBool(false));
   StarPilotLongitudinalPanel *starpilotLongitudinalPanel = new StarPilotLongitudinalPanel(this, !shownDescriptions.value("StarPilotLongitudinalPanel").toBool(false));
   StarPilotMapsPanel *starpilotMapsPanel = new StarPilotMapsPanel(this, !shownDescriptions.value("StarPilotMapsPanel").toBool(false));
   StarPilotModelPanel *starpilotModelPanel = new StarPilotModelPanel(this);
@@ -82,7 +80,7 @@ void StarPilotSettingsWindow::createPanelButtons(StarPilotListWidget *list) {
 
   std::vector<std::vector<std::tuple<QString, QWidget*>>> panelButtons = {
     {{tr("MANAGE"), starpilotSoundsPanel}},
-    {{tr("DRIVING MODEL"), starpilotModelPanel}, {tr("GAS / BRAKE"), starpilotLongitudinalPanel}, {tr("STEERING"), starpilotLateralPanel}},
+    {{tr("DRIVING MODEL"), starpilotModelPanel}, {tr("GAS / BRAKE"), starpilotLongitudinalPanel}},
     {{tr("MAP DATA"), starpilotMapsPanel}, {tr("NAVIGATION"), starpilotNavigationPanel}},
     {{tr("DATA"), starpilotDataPanel}, {tr("DEVICE CONTROLS"), starpilotDevicePanel}, {tr("UTILITIES"), starpilotUtilitiesPanel}},
     {{tr("APPEARANCE"), starpilotVisualsPanel}, {tr("THEME"), starpilotThemesPanel}},
@@ -91,7 +89,7 @@ void StarPilotSettingsWindow::createPanelButtons(StarPilotListWidget *list) {
 
   std::vector<std::tuple<QString, QString, QString>> panelInfo = {
     {tr("Alerts and Sounds"), tr("<b>Adjust alert volumes and enable custom notifications.</b>"), "../../starpilot/assets/toggle_icons/icon_sound.png"},
-    {tr("Driving Controls"), tr("<b>Fine-tune custom StarPilot acceleration, braking, and steering controls.</b>"), "../../starpilot/assets/toggle_icons/icon_steering.png"},
+    {tr("Driving Controls"), tr("<b>Fine-tune custom StarPilot model, acceleration, and braking controls.</b>"), "../../starpilot/assets/toggle_icons/icon_steering.png"},
     {tr("Navigation"), tr("<b>Download map data for the \"Speed Limit Controller\".</b>"), "../../starpilot/assets/toggle_icons/icon_navigate.png"},
     {tr("System Settings"), tr("<b>Manage backups, device settings, screen options, storage, and tools to keep StarPilot running smoothly.</b>"), "../../starpilot/assets/toggle_icons/icon_system.png"},
     {tr("Theme and Appearance"), tr("<b>Customize the look of the driving screen and interface, including themes!</b>"), "../../starpilot/assets/toggle_icons/icon_display.png"},
@@ -155,7 +153,6 @@ void StarPilotSettingsWindow::createPanelButtons(StarPilotListWidget *list) {
 
   QObject::connect(starpilotDataPanel, &StarPilotDataPanel::openSubPanel, this, &StarPilotSettingsWindow::openSubPanel);
   QObject::connect(starpilotDevicePanel, &StarPilotDevicePanel::openSubPanel, this, &StarPilotSettingsWindow::openSubPanel);
-  QObject::connect(starpilotLateralPanel, &StarPilotLateralPanel::openSubPanel, this, &StarPilotSettingsWindow::openSubPanel);
   QObject::connect(starpilotLongitudinalPanel, &StarPilotLongitudinalPanel::openSubPanel, this, &StarPilotSettingsWindow::openSubPanel);
   QObject::connect(starpilotLongitudinalPanel, &StarPilotLongitudinalPanel::openSubSubPanel, this, &StarPilotSettingsWindow::openSubSubPanel);
   QObject::connect(starpilotLongitudinalPanel, &StarPilotLongitudinalPanel::openSubSubSubPanel, this, &StarPilotSettingsWindow::openSubSubSubPanel);

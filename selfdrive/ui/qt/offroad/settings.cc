@@ -21,6 +21,7 @@
 #include "selfdrive/ui/qt/widgets/scrollview.h"
 #include "selfdrive/ui/qt/offroad/developer_panel.h"
 
+#include "starpilot/ui/qt/offroad/lateral_settings.h"
 #include "starpilot/ui/qt/offroad/starpilot_settings.h"
 
 TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
@@ -740,6 +741,9 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
   QObject::connect(starpilotSettingsWindow, &StarPilotSettingsWindow::openSubSubSubPanel, [this]() {subSubSubPanelOpen=true;});
   QObject::connect(starpilotSettingsWindow, &StarPilotSettingsWindow::tuningLevelChanged, this, &SettingsWindow::updateDeveloperToggle);
 
+  StarPilotLateralPanel *steeringPanel = new StarPilotLateralPanel(starpilotSettingsWindow, starpilotSettingsWindow->forceOpenDescriptions);
+  QObject::connect(steeringPanel, &StarPilotLateralPanel::openSubPanel, [this]() {subPanelOpen=true;});
+
   DeveloperPanel *developerPanel = new DeveloperPanel(this);
   QObject::connect(developerPanel, &DeveloperPanel::openSubPanel, [this]() {subPanelOpen=true;});
   QObject::connect(developerPanel, &DeveloperPanel::openSubSubPanel, [this]() {subSubPanelOpen=true;});
@@ -759,6 +763,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     {tr("Network"), networking},
     {tr("Toggles"), toggles},
     {tr("Software"), new SoftwarePanel(this)},
+    {tr("Steering"), steeringPanel},
     {tr("Developer"), developerPanel},
     {tr("StarPilot"), starpilotSettingsWindow},
   };
