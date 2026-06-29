@@ -57,40 +57,6 @@ StarPilotLateralPanel::StarPilotLateralPanel(StarPilotSettingsWindow *parent, bo
     {"NavDesiresAllowed", tr("Use Route Desires"), tr("<b>Allow an active navigation route to request keep-left, keep-right, and low-speed turn desires.</b>"), ""},
     {"NNFF", tr("Neural Network Feedforward (NNFF)"), tr("<b>Twilsonco's \"Neural Network FeedForward\" controller.</b> Uses a trained neural network model to predict steering torque based on vehicle speed, roll, and past/future planned path data for smoother, model-based steering."), ""},
     {"NNFFLite", tr("Neural Network Feedforward (NNFF) Lite"), tr("<b>A lightweight version of Twilsonco's \"Neural Network FeedForward\" controller.</b> Uses the \"look-ahead\" planned lateral jerk logic from the full model to help smoothen steering adjustments in curves, but does not use the full neural network for torque calculation."), ""},
-    {"LatPScaleLowSpeed", tr("Low Speed Proportional Scale"), tr("<b>Scales P below 25 mph.</b> Higher is tighter; lower is softer."), ""},
-    {"LatIScaleLowSpeed", tr("Low Speed Integral Scale"), tr("<b>Scales I below 25 mph.</b> Higher removes steady-state error faster."), ""},
-    {"LatFScaleLowSpeed", tr("Low Speed Feedforward Scale"), tr("<b>Scales feedforward below 25 mph.</b> 100% preserves the tuned value."), ""},
-    {"LatPScaleStandard", tr("Standard Speed Proportional Scale"), tr("<b>Scales P from 25 to 50 mph.</b>"), ""},
-    {"LatIScaleStandard", tr("Standard Speed Integral Scale"), tr("<b>Scales I from 25 to 50 mph.</b>"), ""},
-    {"LatFScaleStandard", tr("Standard Speed Feedforward Scale"), tr("<b>Scales feedforward from 25 to 50 mph.</b> 100% preserves the tuned value."), ""},
-    {"LatPScaleHighway", tr("Highway Proportional Scale"), tr("<b>Scales P above 50 mph.</b>"), ""},
-    {"LatIScaleHighway", tr("Highway Integral Scale"), tr("<b>Scales I above 50 mph.</b>"), ""},
-    {"LatFScaleHighway", tr("Highway Feedforward Scale"), tr("<b>Scales feedforward above 50 mph.</b> 100% preserves the tuned value."), ""},
-    {"HondaCenterScale", tr("Honda Center Boost"), tr("<b>Adds extra correction near center.</b> Useful when straight roads feel too soft."), ""},
-    {"HondaCenterBoostThreshold", tr("Honda Center Boost Threshold"), tr("<b>Angle band where center boost is active.</b>"), ""},
-    {"HondaCenterBoostMinSpeed", tr("Honda Center Boost Minimum Speed"), tr("<b>Disables center boost below this speed.</b>"), ""},
-    {"HondaUnwindFreeze", tr("Honda Unwind Integrator Freeze"), tr("<b>Freezes the PID integrator while steering returns toward center.</b>"), ""},
-    {"HondaUnwindLookahead", tr("Honda Unwind Lookahead"), tr("<b>Uses the planned path to start unwind behavior earlier.</b>"), ""},
-    {"HondaUnwindBoostSeconds", tr("Honda Unwind Boost Duration"), tr("<b>Limits how long the low-speed unwind feedforward boost is held.</b>"), ""},
-    {"HondaUnwindFfMultiplier", tr("Honda Unwind Feedforward Multiplier"), tr("<b>Peak low-speed feedforward multiplier during unwind.</b>"), ""},
-    {"NrdrIncreaseOverrideTolerance", tr("Increase Driver Override Hysteresis"), tr("<b>Filters short same-direction driver torque spikes.</b>"), ""},
-    {"NrdrDriverOverrideThreshold", tr("Driver Override Threshold"), tr("<b>Raw torque threshold for driver steering.</b> 1200 is stock Honda scale."), ""},
-    {"NrdrOverrideThresholdCenterBoost", tr("Center Override Threshold"), tr("<b>Override threshold used inside the center boost angle band.</b>"), ""},
-    {"HondaDriverAssistDuringOverride", tr("Pass-through Assist During Override"), tr("<b>Drop LKAS torque while the driver is steering.</b>"), ""},
-    {"HondaOverrideFadeDownSecs", tr("Override Fade Down"), tr("<b>Seconds to fade steering torque down during override.</b>"), ""},
-    {"HondaOverrideFadeUpSecs", tr("Override Fade Up"), tr("<b>Seconds to fade steering torque back after override.</b>"), ""},
-    {"HondaOverrideTorqueScale", tr("Override Torque Retain"), tr("<b>Torque retained after override fade down.</b>"), ""},
-    {"HondaTorqueLowPassFilter", tr("Honda Torque Low Pass Filter"), tr("<b>Smooths steering torque with speed-banded tau values.</b>"), ""},
-    {"HondaLpfTauLowSpeed", tr("Low Speed LPF Tau"), tr("<b>Low-pass tau below 25 mph.</b>"), ""},
-    {"HondaLpfTauStandard", tr("Standard Speed LPF Tau"), tr("<b>Low-pass tau from 25 to 50 mph.</b>"), ""},
-    {"HondaLpfTauHighway", tr("Highway LPF Tau"), tr("<b>Low-pass tau above 50 mph.</b>"), ""},
-    {"HondaNotchEnabled", tr("Honda Notch Filter"), tr("<b>Removes a narrow EPS chatter band.</b>"), ""},
-    {"HondaNotchFreq", tr("Honda Notch Frequency"), tr("<b>Frequency removed from the torque command.</b>"), ""},
-    {"HondaNotchQ", tr("Honda Notch Q"), tr("<b>Width of the removed frequency band.</b> Higher is narrower."), ""},
-    {"HondaSteerDeltaLimiter", tr("Honda Steer Delta Limiter"), tr("<b>Legacy rate limiter for requested steering torque.</b>"), ""},
-    {"HondaSteerDeltaUp", tr("Honda Steer Delta Up"), tr("<b>Maximum upward steering torque rate.</b>"), ""},
-    {"HondaSteerDeltaDown", tr("Honda Steer Delta Down"), tr("<b>Maximum downward steering torque rate.</b>"), ""},
-    {"NrdrMinSteerSpeed", tr("Minimum Steer Speed"), tr("<b>No steering torque is commanded below this speed.</b> 0 is stock."), ""},
 
     {"QOLLateral", tr("Quality of Life"), tr("<b>Steering control changes to fine-tune how openpilot drives.</b>"), "../../starpilot/assets/toggle_icons/icon_quality_of_life.png"},
     {"PauseLateralSpeed", tr("Pause Steering Below"), tr("<b>Pause steering below the set speed.</b>"), ""},
@@ -159,36 +125,6 @@ StarPilotLateralPanel::StarPilotLateralPanel(StarPilotSettingsWindow *parent, bo
         lateralLayout->setCurrentWidget(lateralTunePanel);
       });
       lateralToggle = lateralTuneToggle;
-    } else if (param == "LatPScaleLowSpeed" || param == "LatIScaleLowSpeed" || param == "LatFScaleLowSpeed" ||
-               param == "LatPScaleStandard" || param == "LatIScaleStandard" || param == "LatFScaleStandard" ||
-               param == "LatPScaleHighway" || param == "LatIScaleHighway" || param == "LatFScaleHighway") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 0, 500, tr("%"), std::map<float, QString>(), 5, true);
-    } else if (param == "HondaCenterScale") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 0, 5, QString(), std::map<float, QString>(), 0.01, false);
-    } else if (param == "HondaCenterBoostThreshold") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 0, 10, tr(" deg"), std::map<float, QString>(), 0.1);
-    } else if (param == "HondaCenterBoostMinSpeed") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 0, 90, tr(" mph"), std::map<float, QString>(), 1, true);
-    } else if (param == "HondaUnwindBoostSeconds") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 0, 3, tr(" s"), std::map<float, QString>(), 0.1);
-    } else if (param == "HondaUnwindFfMultiplier") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 1, 4, tr("x"), std::map<float, QString>(), 0.1);
-    } else if (param == "NrdrDriverOverrideThreshold" || param == "NrdrOverrideThresholdCenterBoost") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 100, 5000, QString(), std::map<float, QString>(), 100, true);
-    } else if (param == "HondaOverrideFadeDownSecs" || param == "HondaOverrideFadeUpSecs") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 0, 10, tr(" s"), std::map<float, QString>(), 0.1);
-    } else if (param == "HondaOverrideTorqueScale") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 0, 100, tr("%"), std::map<float, QString>(), 1, true);
-    } else if (param == "HondaLpfTauLowSpeed" || param == "HondaLpfTauStandard" || param == "HondaLpfTauHighway") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 0, 5, QString(), std::map<float, QString>(), 0.01, false);
-    } else if (param == "HondaNotchFreq") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 1, 20, tr(" Hz"), std::map<float, QString>(), 0.1);
-    } else if (param == "HondaNotchQ") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 0.1, 10, QString(), std::map<float, QString>(), 0.1);
-    } else if (param == "HondaSteerDeltaUp" || param == "HondaSteerDeltaDown") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 0, 100, QString(), std::map<float, QString>(), 0.1, true);
-    } else if (param == "NrdrMinSteerSpeed") {
-      lateralToggle = new StarPilotParamValueControl(param, title, desc, icon, 0, 45, tr(" mph"), std::map<float, QString>(), 1, true);
 
     } else if (param == "QOLLateral") {
       StarPilotManageControl *qolLateralToggle = new StarPilotManageControl(param, title, desc, icon);
