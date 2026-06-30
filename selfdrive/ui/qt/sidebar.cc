@@ -255,7 +255,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
     p.setPen(QColor(0xff, 0xff, 0xff));
     p.save();
     p.setFont(InterFont(30));
-    p.drawText(QRect(50, 196, 225, 27), Qt::AlignLeft | Qt::AlignVCenter, starpilotUIState()->wifi->getIp4Address());
+    p.drawText(QRect(50, 196, 225, 27), Qt::AlignLeft | Qt::AlignVCenter, fs->wifi->ipv4_address);
     p.restore();
   } else {
     int x = 58;
