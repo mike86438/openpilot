@@ -26,6 +26,8 @@ LongCtrlState = car.CarControl.Actuators.LongControlState
 
 _ACCEL_DUE_TO_GRAVITY = 9.81  # m/s^2
 STOPPING_HARD_HOLD_FLOOR = -1.0  # m/s^2; hardcoded safety cap, never a tune field
+_DREL_ROLLING_FRAMES = 10
+_DREL_FILTER_ALPHA = 0.3
 
 
 def compute_stopping_accel(last_output_accel, stop_accel, stopping_decel_rate,
@@ -231,6 +233,8 @@ class LongControl:
     self.last_a_target = 0.0
     self.integrator_hold_frames = 0
     self.stop_release_counter = 0
+    self._drel_window: list[float] = []
+    self._drel_filtered = float("inf")
     self.is_gm_pedal_long = bool(
       CP.brand == "gm" and CP.enableGasInterceptorDEPRECATED and (CP.flags & GMFlags.PEDAL_LONG.value)
     )
@@ -323,6 +327,21 @@ class LongControl:
 
     follow_step = interp(CS.vEgo, [follow_min_speed, 3.0, 6.0, 10.0], [0.02, 0.03, 0.05, 0.07])
     return max(float(a_target), output_accel - float(follow_step))
+
+  def _update_drel_filter(self, drel):
+    if drel is None or not math.isfinite(drel):
+      self._drel_window = []
+      self._drel_filtered = float("inf")
+      return float("inf")
+    self._drel_window.append(float(drel))
+    if len(self._drel_window) > _DREL_ROLLING_FRAMES:
+      self._drel_window.pop(0)
+    rolling_min = min(self._drel_window)
+    if not math.isfinite(self._drel_filtered):
+      self._drel_filtered = rolling_min
+    else:
+      self._drel_filtered = _DREL_FILTER_ALPHA * rolling_min + (1.0 - _DREL_FILTER_ALPHA) * self._drel_filtered
+    return self._drel_filtered
 
   def _get_pedal_long_freeze(self, a_target, error, v_ego, accel_limits):
     volt_test_tune_handoff = self.is_volt and testing_ground.use_2
@@ -451,10 +470,12 @@ class LongControl:
     )
     return a_target * effective_gain
 
-  def update(self, active, CS, a_target, should_stop, accel_limits, starpilot_toggles, has_lead=False):
+  def update(self, active, CS, a_target, should_stop, accel_limits, starpilot_toggles,
+             has_lead=False, pitch=None, drel=None):
     """Update longitudinal control. This updates the state machine and runs a PID loop"""
     self.pid.neg_limit = accel_limits[0]
     self.pid.pos_limit = accel_limits[1]
+    drel_filtered = self._update_drel_filter(drel)
 
     allow_stopping_release = self._stop_release_ready(CS, a_target, should_stop, has_lead, starpilot_toggles)
     self.long_control_state = long_control_state_trans(self.CP, active, self.long_control_state, CS.vEgo,
@@ -478,9 +499,9 @@ class LongControl:
           hold_accel=st.get("hold_accel", -0.6),
           phase_switch_v=st.get("phase_switch_v", 0.15),
           proximity_scale_m=st.get("proximity_scale_m", 8.0),
-          pitch_margin=st.get("pitch_margin", 0.0),
-          drel_filtered=float("inf"),
-          pitch=float("nan"),
+          pitch_margin=st.get("pitch_margin", 1.0),
+          drel_filtered=drel_filtered,
+          pitch=pitch if pitch is not None else float("nan"),
         )
       else:
         output_accel = self.last_output_accel

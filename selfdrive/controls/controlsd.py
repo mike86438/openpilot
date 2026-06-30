@@ -212,9 +212,12 @@ class Controls:
     # accel PID loop
     pid_accel_limits = self.CI.get_pid_accel_limits(self.CP, CS.vEgo, CS.vCruise * CV.KPH_TO_MS)
     self.LoC.experimental_mode = bool(self.sm['selfdriveState'].experimentalMode)
+    long_pitch = float(self.calibrated_pose.orientation.xyz[1]) if self.calibrated_pose is not None else None
+    long_drel = float(long_plan.leadTrajectoryX0[0]) if (long_plan.hasLead and len(long_plan.leadTrajectoryX0) > 0) else None
     actuators.accel = float(min(self.LoC.update(CC.longActive, CS, long_plan.aTarget, long_plan.shouldStop, pid_accel_limits,
-                                                self.starpilot_toggles, has_lead=long_plan.hasLead),
-                                self.starpilot_toggles.max_desired_acceleration))
+                                                self.starpilot_toggles, has_lead=long_plan.hasLead,
+                                                pitch=long_pitch, drel=long_drel),
+                                 self.starpilot_toggles.max_desired_acceleration))
 
     # Steering PID loop and lateral MPC
     # Reset desired curvature to current to avoid violating the limits on engage
