@@ -34,3 +34,9 @@ export STAGING_ROOT="/data/safe_staging"
 if [ -x /data/openpilot/starpilot/system/environment_variables ]; then
   eval "$(/data/openpilot/starpilot/system/environment_variables)"
 fi
+
+# Qt 5's generic bearer backend polls NetworkManager over DBus from the UI
+# process. On devices with flapping Wi-Fi/NetworkManager, that can block the Qt
+# main thread long enough for the manager watchdog to kill and restart ui.
+export QT_EXCLUDE_GENERIC_BEARER=1
+export QT_BEARER_POLL_TIMEOUT=-1
