@@ -42,6 +42,23 @@ StarPilotNrdrPanel::StarPilotNrdrPanel(StarPilotSettingsWindow *parent, bool for
   addValue("LatIScaleHighway", tr("Highway Integral Scale"), tr("<b>Scales I above 50 mph.</b>"), 0, 500, tr("%"), 5, true);
   addValue("LatFScaleHighway", tr("Highway Feedforward Scale"), tr("<b>Scales feedforward above 50 mph.</b> 100% preserves the tuned value."), 0, 500, tr("%"), 5, true);
 
+  // ---- NRDR Auto Tuning ----
+  addHeader(tr("NRDR Auto Tuning"));
+  addToggle("NrdrLearnSteerRatio", tr("Learn Steering Ratio"), tr("<b>Use paramsd's learned steering ratio.</b> Turn off to lock to the static car value."));
+  addToggle("NrdrLearnStiffness", tr("Learn Tire Stiffness"), tr("<b>Use paramsd's learned tire stiffness factor.</b> Turn off to use 1.0."));
+  addToggle("NrdrLearnAngleOffset", tr("Learn Angle Offset"), tr("<b>Use paramsd's learned steering angle offset.</b> Turn off to use zero offset."));
+  addToggle("EnforceTorqueControl", tr("NRDR Torque Auto-Tune Routing"), tr("<b>Allow NRDR live torque params to control whether learned torque tuning is used.</b>"));
+  addToggle("LiveTorqueParamsToggle", tr("Use Live Torque Parameters"), tr("<b>Use learned friction and lateral acceleration values from torqued.</b>"));
+  addToggle("LiveTorqueParamsRelaxedToggle", tr("Relax Torque Learning Gates"), tr("<b>Collect live torque parameters with relaxed bucket/sanity limits.</b> Useful for sparse data, but less conservative."));
+  addToggle("CustomTorqueParams", tr("Use Custom Torque Parameters"), tr("<b>Enable NRDR manual torque override values.</b>"));
+  addToggle("TorqueParamsOverrideEnabled", tr("Apply Custom Torque Override"), tr("<b>Apply the manual friction and lateral acceleration override values below.</b>"));
+  addValue("TorqueParamsOverrideFriction", tr("Override Friction"), tr("<b>Manual steering friction value used when custom torque override is active.</b>"), 0, 1, QString(), 0.01, false);
+  addValue("TorqueParamsOverrideLatAccelFactor", tr("Override Lateral Accel Factor"), tr("<b>Manual lateral acceleration factor used when custom torque override is active.</b>"), 0, 10, QString(), 0.01, false);
+  addToggle("NrdrTuneLearner", tr("2D Online Tune Learner"), tr("<b>Learn a small speed/angle feedforward trim map while driving.</b> Default off; use carefully."));
+  addValue("NrdrTuneLearnerStrength", tr("Tune Learner Strength"), tr("<b>Hard cap for learned trim authority as a percent of full steering output.</b>"), 0, 30, tr("%"), 1, true);
+  addValue("NrdrTuneLearnerRate", tr("Tune Learner Rate"), tr("<b>Learning speed as a percent of the reference rate.</b> 0 freezes learning while still applying the saved map."), 0, 100, tr("%"), 1, true);
+  addToggle("NrdrTuneLearnerReset", tr("Reset Tune Learner Map"), tr("<b>Clear the saved 2D learned trim map.</b> The control clears itself after the reset is processed."));
+
   // ---- Honda EPS: Center / Unwind ----
   addHeader(tr("Honda EPS — Center / Unwind"));
   addValue("HondaCenterScale", tr("Honda Center Boost"), tr("<b>Adds extra correction near center.</b> Useful when straight roads feel too soft."), 0, 5, QString(), 0.01, false);
