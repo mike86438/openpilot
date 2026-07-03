@@ -49,6 +49,8 @@ StarPilotAnnotatedCameraWidget::StarPilotAnnotatedCameraWidget(QWidget *parent) 
 
     frogHopCount = 0;
   });
+
+  updateSignals();
 }
 
 void StarPilotAnnotatedCameraWidget::showEvent(QShowEvent *event) {

@@ -42,7 +42,6 @@ OnroadWindow::OnroadWindow(QWidget *parent) : QWidget(parent) {
   starpilot_onroad = new StarPilotOnroadWindow(this);
   starpilot_onroad->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-  stacked_layout->addWidget(starpilot_nvg);
   stacked_layout->addWidget(starpilot_onroad);
 
   starpilot_onroad->raise();
@@ -103,6 +102,11 @@ void OnroadWindow::updateState(const UIState &s, const StarPilotUIState &fs) {
   nvg->starpilot_toggles = starpilot_toggles;
 
   starpilot_onroad->setGeometry(rect());
+  const bool show_starpilot_overlay = starpilot_toggles.value("blind_spot_metrics").toBool() ||
+                                      starpilot_toggles.value("show_fps").toBool() ||
+                                      starpilot_toggles.value("signal_metrics").toBool() ||
+                                      starpilot_toggles.value("steering_metrics").toBool();
+  starpilot_onroad->setVisible(show_starpilot_overlay);
 
   starpilot_nvg->updateState(s, fs);
   starpilot_onroad->updateState(s, fs);

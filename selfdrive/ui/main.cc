@@ -2,7 +2,6 @@
 #include <unistd.h>
 
 #include <QApplication>
-#include <QSurfaceFormat>
 #include <QTranslator>
 
 #include "common/swaglog.h"
@@ -33,19 +32,6 @@ int main(int argc, char *argv[]) {
   setpriority(PRIO_PROCESS, 0, -20);
 
   qInstallMessageHandler(waylandAwareMessageHandler);
-
-  // Triple-buffer the GL backing store. The onroad camera is a QOpenGLWidget, so every
-  // frame is composited to the window via composeAndFlush -> EGL DequeueBuffer on the
-  // Adreno/Wayland driver. With only 2 buffers that dequeue occasionally deadlocks
-  // (main render thread + driver's EglWaylandUpdater both block waiting for a buffer),
-  // hanging the UI main thread until the manager watchdog restarts us. A third buffer
-  // keeps a free buffer available so the dequeue never has to block.
-  {
-    QSurfaceFormat fmt = QSurfaceFormat::defaultFormat();
-    fmt.setSwapBehavior(QSurfaceFormat::TripleBuffer);
-    QSurfaceFormat::setDefaultFormat(fmt);
-  }
-
   initApp(argc, argv);
 
   QTranslator translator;

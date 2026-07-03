@@ -111,6 +111,12 @@ void setQtSurfaceFormat() {
 #else
   fmt.setRenderableType(QSurfaceFormat::OpenGLES);
 #endif
+  // The onroad camera is a QOpenGLWidget composited through Qt's Wayland
+  // backing store. On Tizi, the Adreno/Wayland driver can block in
+  // EglWaylandWlWindowSurface::DequeueBuffer() when the two-buffer chain is
+  // exhausted. Set this here, after creating the final surface format, so it is
+  // not clobbered before QApplication creates the GL widgets.
+  fmt.setSwapBehavior(QSurfaceFormat::TripleBuffer);
   fmt.setSamples(16);
   fmt.setStencilBufferSize(1);
   QSurfaceFormat::setDefaultFormat(fmt);

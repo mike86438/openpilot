@@ -13,6 +13,13 @@ OUT_FILE="${OUT_DIR}/ui_freeze_${TS}.log"
 
 mkdir -p "${OUT_DIR}"
 
+ui_pids() {
+  {
+    pgrep -f "selfdrive.ui.ui|/selfdrive/ui/ui" 2>/dev/null || true
+    pgrep -x ui 2>/dev/null || true
+  } | sort -n | uniq
+}
+
 {
   echo "=== UI Freeze Debug ==="
   echo "timestamp: $(date -Ins)"
@@ -21,7 +28,7 @@ mkdir -p "${OUT_DIR}"
   echo
 
   echo "=== Process Snapshot ==="
-  ps -eo pid,ppid,stat,ni,etime,comm,args | grep -E "(manager.py|selfdrive.ui.ui|/selfdrive/ui/ui|weston|loggerd|encoderd|modeld|dmonitoringmodeld)" || true
+  ps -eo pid,ppid,stat,ni,etime,comm,args | grep -E "(manager.py|selfdrive.ui.ui|/selfdrive/ui/ui|[[:space:]]ui[[:space:]]+\\./ui|weston|loggerd|encoderd|modeld|dmonitoringmodeld)" || true
   echo
 
   echo "=== Manager State (tmux service output) ==="
@@ -35,8 +42,10 @@ mkdir -p "${OUT_DIR}"
   echo
 
   echo "=== UI PID + Watchdog Timestamp Delta ==="
-  for ui_pid in $(pgrep -f "selfdrive.ui.ui|/selfdrive/ui/ui" 2>/dev/null || true); do
+  for ui_pid in $(ui_pids); do
     echo "ui_pid=${ui_pid}"
+    echo "cmdline=$(tr '\0' ' ' <"/proc/${ui_pid}/cmdline" 2>/dev/null || true)"
+    echo "cwd=$(readlink "/proc/${ui_pid}/cwd" 2>/dev/null || true)"
     wd_file="/dev/shm/wd_${ui_pid}"
     if [[ -f "${wd_file}" ]]; then
       now_ns="$(python3 - <<'PY'
@@ -74,7 +83,7 @@ PY
   echo
 
   echo "=== open files for UI process(es) ==="
-  for ui_pid in $(pgrep -f "selfdrive.ui.ui|/selfdrive/ui/ui" 2>/dev/null || true); do
+  for ui_pid in $(ui_pids); do
     echo "--- lsof for pid ${ui_pid} ---"
     lsof -p "${ui_pid}" 2>/dev/null | tail -n 200 || true
   done
