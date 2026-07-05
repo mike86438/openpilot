@@ -68,6 +68,7 @@ STARPILOT_PC_ROOT_MIGRATION_FLAG = Path("/data") / "starpilot_pc_root_v1"
 STARPILOT_PARAMS_CACHE_MIGRATION_FLAG = Path("/data") / "starpilot_params_cache_v1"
 STARPILOT_LEGACY_CACHE_MARKER_KEYS = ("RemapCancelToDistance",)
 NRDR_HONDA_TUNING_DEFAULTS_MIGRATION_FLAG = Path("/data") / "nrdr_honda_tuning_defaults_v2"
+NRDR_HONDA_OVERRIDE_SEMANTICS_MIGRATION_FLAG = Path("/data") / "nrdr_honda_override_semantics_v1"
 NRDR_KONIK_DEFAULT_MIGRATION_FLAG = Path("/data") / "nrdr_konik_default_v1"
 NRDR_DM_DEFAULTS_MIGRATION_FLAG = Path("/data") / "nrdr_dm_defaults_v1"
 STARPILOT_REMOVED_PARAM_KEYS = ("HumanFollowing",)
@@ -639,7 +640,7 @@ def migrate_nrdr_honda_tuning_defaults(params: Params, params_cache: Params) -> 
 
   seeded_keys: list[str] = []
   desired_bool_values = {
-    "HondaDriverAssistDuringOverride": True,
+    "HondaDriverAssistDuringOverride": False,
     "HondaNotchEnabled": True,
     "HondaSteerDeltaLimiter": False,
     "HondaTorqueLowPassFilter": True,
@@ -708,6 +709,21 @@ def migrate_nrdr_honda_tuning_defaults(params: Params, params_cache: Params) -> 
     NRDR_HONDA_TUNING_DEFAULTS_MIGRATION_FLAG.write_text(f"{datetime.datetime.now(datetime.UTC).isoformat()}\n")
   except Exception:
     cloudlog.exception(f"Failed to write migration flag: {NRDR_HONDA_TUNING_DEFAULTS_MIGRATION_FLAG}")
+
+
+def migrate_nrdr_honda_override_semantics(params: Params, params_cache: Params) -> None:
+  if NRDR_HONDA_OVERRIDE_SEMANTICS_MIGRATION_FLAG.exists():
+    return
+
+  for key in ("HondaDriverAssistDuringOverride", "NrdrIncreaseOverrideTolerance"):
+    params.put_bool(key, False)
+    params_cache.put_bool(key, False)
+
+  try:
+    NRDR_HONDA_OVERRIDE_SEMANTICS_MIGRATION_FLAG.parent.mkdir(parents=True, exist_ok=True)
+    NRDR_HONDA_OVERRIDE_SEMANTICS_MIGRATION_FLAG.write_text(f"{datetime.datetime.now(datetime.UTC).isoformat()}\n")
+  except Exception:
+    cloudlog.exception(f"Failed to write migration flag: {NRDR_HONDA_OVERRIDE_SEMANTICS_MIGRATION_FLAG}")
 
 
 def migrate_nrdr_konik_default(params: Params, params_cache: Params) -> None:
@@ -976,6 +992,7 @@ def manager_init() -> None:
   migrate_cluster_offset_default(params, params_cache)
   migrate_prioritize_smooth_following_default(params, params_cache)
   migrate_nrdr_honda_tuning_defaults(params, params_cache)
+  migrate_nrdr_honda_override_semantics(params, params_cache)
   migrate_nrdr_konik_default(params, params_cache)
   migrate_nrdr_dm_defaults(params, params_cache)
   last_timing = _log_boot_timing("manager_init", "starpilot_migrations", manager_init_start, last_timing)
