@@ -154,6 +154,9 @@ StarPilotVehiclesPanel::StarPilotVehiclesPanel(StarPilotSettingsWindow *parent, 
   });
   settingsList->addItem(disableOpenpilotLong);
 
+  disableSeatbeltCheck = new ParamControl("DisableSeatbeltCheck", tr("Disable Seatbelt Check"), tr("<b>Do not block openpilot engagement</b> when the driver seatbelt signal reports unlatched."), "");
+  settingsList->addItem(disableSeatbeltCheck);
+
   StarPilotListWidget *chryslerList = new StarPilotListWidget(this);
   StarPilotListWidget *gmList = new StarPilotListWidget(this);
   StarPilotListWidget *hkgList = new StarPilotListWidget(this);
@@ -490,6 +493,7 @@ void StarPilotVehiclesPanel::updateToggles() {
   }
 
   disableOpenpilotLong->setVisible(showAllToggles || ((parent->hasOpenpilotLongitudinal || parent->openpilotLongitudinalControlDisabled) && !parent->hasAlphaLongitudinal && parent->tuningLevel >= parent->starpilotToggleLevels["DisableOpenpilotLongitudinal"].toDouble()));
+  disableSeatbeltCheck->setVisible(showAllToggles || parent->tuningLevel >= parent->starpilotToggleLevels["DisableSeatbeltCheck"].toDouble());
   forceFingerprint->setVisible(showAllToggles || parent->tuningLevel >= parent->starpilotToggleLevels["ForceFingerprint"].toDouble());
 
   openDescriptions(forceOpenDescriptions, toggles);

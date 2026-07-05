@@ -35,6 +35,7 @@ private:
 
   StarPilotSettingsWindow *parent;
 
+  ParamControl *disableSeatbeltCheck;
   ParamControl *disableOpenpilotLong;
   ParamControl *forceFingerprint;
 
