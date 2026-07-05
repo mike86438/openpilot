@@ -745,6 +745,8 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
 
   StarPilotNrdrPanel *nrdrPanel = new StarPilotNrdrPanel(starpilotSettingsWindow, starpilotSettingsWindow->forceOpenDescriptions);
   QObject::connect(nrdrPanel, &StarPilotNrdrPanel::openSubPanel, [this]() {subPanelOpen=true;});
+  StarPilotNrdrLongPanel *nrdrLongPanel = new StarPilotNrdrLongPanel(starpilotSettingsWindow, starpilotSettingsWindow->forceOpenDescriptions);
+  QObject::connect(nrdrLongPanel, &StarPilotNrdrLongPanel::openSubPanel, [this]() {subPanelOpen=true;});
 
   DeveloperPanel *developerPanel = new DeveloperPanel(this);
   QObject::connect(developerPanel, &DeveloperPanel::openSubPanel, [this]() {subPanelOpen=true;});
@@ -765,7 +767,8 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     {tr("Network"), networking},
     {tr("Toggles"), toggles},
     {tr("Software"), new SoftwarePanel(this)},
-    {tr("NRDR"), nrdrPanel},
+    {tr("NRDR Lateral"), nrdrPanel},
+    {tr("NRDR Long"), nrdrLongPanel},
     {tr("Developer"), developerPanel},
     {tr("StarPilot"), starpilotSettingsWindow},
   };
