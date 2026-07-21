@@ -427,9 +427,9 @@ class ConditionalExperimentalMode:
 
       stop_threshold = max(v_ego * adjusted_model_time, 0.0)
       if self.stop_light_model_detected:
-        model_stopping = self.starpilot_planner.model_length < stop_threshold + self.STOP_LIGHT_OFF_MARGIN
+        model_stopping = self.starpilot_planner.model_length < stop_threshold + self.STOP_LIGHT_OFF_MARGIN and v_ego < 22
       else:
-        model_stopping = self.starpilot_planner.model_length < max(stop_threshold - self.STOP_LIGHT_ON_MARGIN, 0.0)
+        model_stopping = self.starpilot_planner.model_length < max(stop_threshold - self.STOP_LIGHT_ON_MARGIN, 0.0) or v_ego > 22
       self.stop_light_model_detected = model_stopping
 
       # `model_stopped` is a coarse horizon-length check (< 50 m with current constants)
