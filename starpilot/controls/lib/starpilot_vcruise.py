@@ -381,6 +381,7 @@ class StarPilotVCruise:
     # Override: gas/accel pedal during an active force stop
     self.override_force_stop |= sm["carState"].gasPressed
     self.override_force_stop |= sm["starpilotCarState"].accelPressed
+    self.override_force_stop |= self.starpilot_planner.tracking_lead and 1 < getattr(self.starpilot_planner.lead_one, "dRel", float("inf")) < 15
     self.override_force_stop &= force_stop_enabled
 
     if self.override_force_stop:
