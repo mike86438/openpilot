@@ -263,7 +263,7 @@ class LongControl:
       getattr(CP, "carFingerprint", None) == CAR.CHEVROLET_BOLT_ACC_2022_2023_PEDAL and
       (CP.flags & GMFlags.PEDAL_LONG.value)
     )
-    self._long_tune = LongTune()
+
 
   def update_mpc_mode(self, experimental_mode):
     new_mode = 'blended' if experimental_mode else 'acc'
@@ -531,27 +531,10 @@ class LongControl:
       output_accel = 0.
 
     elif self.long_control_state == LongCtrlState.stopping:
-      self._long_tune.refresh()
-      st = self._long_tune.stopping
-      if st.get("l2_enable", 1.0) >= 0.5:
-        output_accel = compute_stopping_accel(
-          last_output_accel=self.last_output_accel,
-          stop_accel=long_tuning.stopAccel,
-          stopping_decel_rate=long_tuning.stoppingDecelRate,
-          v_ego=CS.vEgo,
-          v_ego_stopping=long_tuning.vEgoStopping,
-          hold_accel=st.get("hold_accel", -0.6),
-          phase_switch_v=st.get("phase_switch_v", 0.15),
-          proximity_scale_m=st.get("proximity_scale_m", 8.0),
-          pitch_margin=st.get("pitch_margin", 1.0),
-          drel_filtered=drel_filtered,
-          pitch=pitch if pitch is not None else float("nan"),
-        )
-      else:
-        output_accel = self.last_output_accel
-        if output_accel > long_tuning.stopAccel:
-          output_accel = min(output_accel, 0.0)
-          output_accel -= long_tuning.stoppingDecelRate * DT_CTRL
+      output_accel = self.last_output_accel
+      if output_accel > starpilot_toggles.stopAccel:
+        output_accel = min(output_accel, 0.0)
+        output_accel -= starpilot_toggles.stoppingDecelRate * DT_CTRL
       output_accel = self._apply_moving_stop_target_follow(output_accel, a_target, should_stop, CS, long_tuning.vEgoStopping)
       self.reset(preserve_stop_release=True)
 
