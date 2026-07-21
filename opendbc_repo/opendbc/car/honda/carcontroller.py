@@ -468,7 +468,7 @@ class CarController(CarControllerBase):
     pre_limit_brake, self.braking, self.brake_steady = actuator_hysteresis(brake, self.braking, self.brake_steady, CS.out.vEgo, self.CP.carFingerprint)
 
     # *** rate limit after the enable check ***
-    _brake_rate_up = live["stopping_decel_rate"] if actuators.longControlState == LongCtrlState.stopping else 3.0
+    _brake_rate_up = live["stopping_decel_rate"] if actuators.longControlState == LongCtrlState.stopping else 1.0
     self.brake_last = rate_limit(pre_limit_brake, self.brake_last, -2.0, _brake_rate_up * DT_CTRL)
 
     # vehicle hud display, wait for one update from 10Hz 0x304 msg
