@@ -518,7 +518,14 @@ class StarPilotVCruise:
         targets.append(slc_control_target)
       if self.nav_turn_target > 0.0:
         targets.append(self.nav_turn_target)
-      v_cruise = min(targets)
+
+      # Float 10 mph over vcruise
+      actuators = sm["carControl"].actuators
+      if all(target >= v_cruise for target in targets) and v_ego > (v_cruise + 0.5):
+        buffer = 0.1 if actuators.accel < 0 else 0.5
+        v_cruise = min(v_ego - buffer, v_cruise + 4.4704)
+      else:
+        v_cruise = min(targets)
 
     self.controls_enabled_previously = controls_enabled
     return v_cruise
