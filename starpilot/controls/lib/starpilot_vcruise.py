@@ -521,8 +521,8 @@ class StarPilotVCruise:
 
       # Float 10 mph over vcruise
       actuators = sm["carControl"].actuators
-      if all(target >= v_cruise for target in targets) and v_ego > (v_cruise + 0.5):
-        buffer = 0.1 if actuators.accel < 0 else 0.5
+      if all(target >= v_cruise for target in targets) and v_ego > v_cruise:
+        buffer = min(0.1, v_ego - v_cruise) if actuators.accel < 0 else min(0.5, v_ego - v_cruise)
         v_cruise = min(v_ego - buffer, v_cruise + 4.4704)
       else:
         v_cruise = min(targets)
