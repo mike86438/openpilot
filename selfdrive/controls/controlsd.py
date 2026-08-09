@@ -726,8 +726,11 @@ class Controls:
       not self.sm['longitudinalPlan'].shouldStop or legacy_resume_hack
     )
 
+    v_lead = CS.vEgo + self.sm['radarState'].leadOne.vRel
+    v_cruise = CS.vCruiseCluster * CV.KPH_TO_MS
+    has_lead = self.sm['longitudinalPlan'].hasLead
     hudControl = CC.hudControl
-    hud_set_speed = float(CS.vCruiseCluster * CV.KPH_TO_MS)
+    hud_set_speed = float(v_lead if has_lead and v_lead < v_cruise else v_cruise)
     gm_dash_spoof_offsets_enabled = (
       self.CP.brand == "gm" and
       self.CP.openpilotLongitudinalControl and
@@ -741,7 +744,7 @@ class Controls:
     hudControl.setSpeed = hud_set_speed
     hudControl.speedVisible = CC.enabled
     hudControl.lanesVisible = CC.enabled
-    hudControl.leadVisible = self.sm['longitudinalPlan'].hasLead
+    hudControl.leadVisible = has_lead
     hudControl.leadDistanceBars = self.sm['selfdriveState'].personality.raw + 1
     hudControl.visualAlert = self.sm['selfdriveState'].alertHudVisual
 
