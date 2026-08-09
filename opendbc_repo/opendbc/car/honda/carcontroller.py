@@ -160,7 +160,7 @@ def compute_gb_honda_nidec(accel, speed):
   creep_brake_value = 0.15
   if speed < creep_speed:
     creep_brake = (creep_speed - speed) / creep_speed * creep_brake_value
-  gb = float(accel) / 4.8 - creep_brake
+  gb = float(accel) / 4.0 - creep_brake
   return np.clip(gb, 0.0, 1.0), np.clip(-gb, 0.0, 1.0)
 
 
@@ -521,7 +521,7 @@ class CarController(CarControllerBase):
             hondacan.create_acc_commands(self.packer, self.CAN, CC.enabled, CC.longActive, self.accel, self.gas, self.stopping_counter, self.CP.carFingerprint)
           )
         else:
-          apply_brake = np.clip(self.brake_last - wind_brake, 0.0, 1.0)
+          apply_brake = np.clip(self.brake_last - (wind_brake if self.brake_last <= 0.95 else 0.0), 0.0, 1.0)
           apply_brake = int(np.clip(apply_brake * self.params.NIDEC_BRAKE_MAX, 0, self.params.NIDEC_BRAKE_MAX - 1))
           pump_on, self.last_pump_ts = brake_pump_hysteresis(apply_brake, self.apply_brake_last, self.last_pump_ts, ts)
 
@@ -548,7 +548,7 @@ class CarController(CarControllerBase):
             )
 
           if self.CP.enableGasInterceptorDEPRECATED:
-            gas_mult = float(np.interp(CS.out.vEgo, [0.0, 10.0], [0.4, 1.0]))
+            gas_mult = float(np.interp(CS.out.vEgo, [0.0, 10.0], [1.0, 1.0]))
             if CC.longActive:
               gas_interceptor_command = float(np.clip(
                 gas_mult * ((gas * self.bosch_gas_factor) - brake + (wind_brake * self.bosch_wind_factor * 3.0 / 4.0)),
