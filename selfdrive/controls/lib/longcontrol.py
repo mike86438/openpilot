@@ -424,13 +424,17 @@ class LongControl:
       )
       raw_output_accel = self.pid.update(error, speed=CS.vEgo, feedforward=feedforward,
                                          freeze_integrator=freeze_integrator)
+      stepOne = raw_output_accel
       if self.is_honda:
         if self.honda_scale_excludes_kf:
           raw_output_accel = (raw_output_accel - self.pid.f) * self.honda_long_pid_tune_scale + self.pid.f
         else:
           raw_output_accel *= self.honda_long_pid_tune_scale
+      stepTwo = raw_output_accel
       raw_output_accel = self._cap_positive_output_on_negative_target(raw_output_accel, a_target, error, CS)
+      stepThree = raw_output_accel
       raw_output_accel = self.vehicle_tuning.apply_pedal_long_brake_bias(raw_output_accel, a_target, CS)
+      stepFour = raw_output_accel
 
 
       if self.transitioning and self.prev_mode == 'acc' and self.current_mode == 'blended':
@@ -446,6 +450,17 @@ class LongControl:
           output_accel = raw_output_accel
       else:
         output_accel = raw_output_accel
+      stepFive = output_accel
+      if stepFive < 0.0:
+        print(f"LongControl: {self.long_control_state} | "
+              f"a_target: {a_target:.3f} | "
+              f"error: {error:.3f} | "
+              f"ff: {feedforward:.3f} | "
+              f"PID: {stepOne:.3f} | "
+              f"scaled: {stepTwo:.3f} | "
+              f"capped: {stepThree:.3f} | "
+              f"bias: {stepFour:.3f} | "
+              f"final: {stepFive:.3f}")
 
     self.last_output_accel = clip(output_accel, accel_limits[0], accel_limits[1])
     return self.last_output_accel
